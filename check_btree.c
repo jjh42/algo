@@ -58,15 +58,35 @@ END_TEST
 START_TEST(test_btree_more_entries_reversed)
 {
   btree_t *tree = (btree_t*) init_btree(3);
+  for(int i = 25; i >= 0; i--) {
+    map_set((map_t*) tree, i, (void *) (long) (i + 1));
+  }
+
+  for(int i = 0; i <= 25; i++) {
+    bool found;
+    int m = (int) map_get((map_t*) tree, i, &found);
+    ck_assert_int_eq(m, i + 1);
+    ck_assert(found);
+  }
+}
+END_TEST
+
+
+START_TEST(test_btree_duplicates)
+{
+  btree_t *tree = (btree_t*) init_btree(3);
   for(int i = 100; i >= 0; i--) {
     map_set((map_t*) tree, i, (void *) (long) (i + 1));
+  }
+  for(int i = 0; i <= 100; i++) {
+    map_set((map_t*) tree, i, (void *) (long) (i + 2));
   }
 
   for(int i = 0; i <= 100; i++) {
     bool found;
     int m = (int) map_get((map_t*) tree, i, &found);
+    ck_assert_int_eq(m, i + 2);
     ck_assert(found);
-    ck_assert_int_eq(m, i + 1);
   }
 }
 END_TEST
@@ -80,6 +100,7 @@ Suite *btree_suite()
   tcase_add_test(tc_core, test_btree_one_entry);
   tcase_add_test(tc_core, test_btree_more_entries);
   tcase_add_test(tc_core, test_btree_more_entries_reversed);
+  tcase_add_test(tc_core, test_btree_duplicates);
   suite_add_tcase(s, tc_core);
 
   return s;

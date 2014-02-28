@@ -137,32 +137,55 @@ void split_child(btree_t *tree, btree_node_t *x, int i)
 }
 
 
+void insert_in_leaf_node(btree_t *tree, btree_node_t *x, int key, void *value)
+{
+  // First check if the key already exists
+  for(int k = 0; k < x->n; k++) {
+	if (x->keys[k] == key) {
+	  get_values(tree, x)[k] = value;
+	  return;
+    }
+  }
+
+  int i = x->n - 1;
+  for(; (i >= 0) && (key < x->keys[i]); i--) {
+	x->keys[i+1] = x->keys[i];
+	get_values(tree, x)[i+1] = get_values(tree, x)[i];
+  }
+
+  x->keys[i+1] = key;
+  get_values(tree, x)[i+1] = value;
+  x->n ++;
+}
+
 void insert_nonfull(btree_t *tree, btree_node_t *x, int key, void *value)
 {
-  if( x->leaf) {
-	int i = x->n - 1;
-	for(; (i >= 0) && (key < x->keys[i]); i--) {
-	  x->keys[i+1] = x->keys[i];
-	  get_values(tree, x)[i+1] = get_values(tree, x)[i];
-    }
+  if( x-> leaf ) {
+	insert_in_leaf_node(tree, x, key, value);
+    return;
+  }
 
-	x->keys[i+1] = key;
-	get_values(tree, x)[i+1] = value;
-	x->n ++;
+  int i = x->n - 1;
+
+  for(; (i >= 0) && (key < x->keys[i]); i--);
+
+  if((i >= 0) && (x->keys[i] == key)) {
+	// Update existing value
+	get_values(tree, x)[i] = value;
+    return;
   }
-  else {
-	int i = x->n - 1;
-	for(; (i >= 0) && (key < x->keys[i]); i--);
-	i++;
-	btree_node_t *child = get_children(tree, x)[i];
-	if(child->n == (2*tree->t - 1)) {
-	  split_child(tree, x, i);
-	  if (key > x->keys[i]) {
-		i++;
-      }
-    }
-	insert_nonfull(tree, child, key, value);
+
+  i++;
+
+  btree_node_t *child = get_children(tree, x)[i];
+  if(child->n == (2*tree->t - 1)) {
+	split_child(tree, x, i);
+	if (key > x->keys[i]) {
+	  child = get_children(tree, x)[i + 1];
+	}
   }
+  insert_nonfull(tree, child, key, value);
+
 }
 
 
