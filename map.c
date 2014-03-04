@@ -10,7 +10,7 @@ void *map_get(map_t *m, int key, bool *found)
   return m->vtable->get(m, key, found);
 }
 
-void map_delete(map_t *m)
+void map_free(map_t *m)
 {
-  return m->vtable->delete(m);
+  return m->vtable->free(m);
 }

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 
+#include "map_testing.h"
+
 #include "btree.h"
 #include "btree_internal.h"
 
@@ -12,6 +14,8 @@ START_TEST(test_btree_init)
 
   ck_assert_ptr_eq(tree->base.vtable->get, btree_get);
   ck_assert_ptr_eq(tree->base.vtable->set, btree_set);
+
+  map_free((map_t *) tree);
 }
 END_TEST
 
@@ -32,6 +36,9 @@ START_TEST(test_btree_one_entry)
 
   map_get((map_t*) tree, 5, &found);
   ck_assert(!found);
+
+  map_free((map_t*) tree);
+
 }
 END_TEST
 
@@ -68,6 +75,8 @@ START_TEST(test_btree_more_entries_reversed)
     ck_assert_int_eq(m, i + 1);
     ck_assert(found);
   }
+
+  map_free((map_t*) tree);
 }
 END_TEST
 
@@ -88,8 +97,14 @@ START_TEST(test_btree_duplicates)
     ck_assert_int_eq(m, i + 2);
     ck_assert(found);
   }
+
+  map_free((map_t*) tree);
 }
 END_TEST
+
+
+MAP_TESTS(btree_map3, "btree_map3", init_btree(3));
+MAP_TESTS(btree_map5, "btree_map5", init_btree(5));
 
 
 Suite *btree_suite()
@@ -101,18 +116,13 @@ Suite *btree_suite()
   tcase_add_test(tc_core, test_btree_more_entries);
   tcase_add_test(tc_core, test_btree_more_entries_reversed);
   tcase_add_test(tc_core, test_btree_duplicates);
+
+  TCase *map_core3 = btree_map3_tests_core_create();
+  TCase *map_core5 = btree_map5_tests_core_create();
+
   suite_add_tcase(s, tc_core);
+  suite_add_tcase(s, map_core3);
+  suite_add_tcase(s, map_core5);
 
   return s;
-}
-
-
-int main()
-{
-  Suite *s = btree_suite();
-  SRunner *sr = srunner_create(s);
-  srunner_run_all(sr, CK_NORMAL);
-  int n_failed = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (n_failed == 0)? EXIT_SUCCESS : EXIT_FAILURE;
 }

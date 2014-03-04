@@ -21,7 +21,7 @@ typedef struct
 
 void* btree_get(btree_t *tree, int key, bool *found);
 void btree_set(btree_t *tree, int key, void *value);
-void btree_delete(btree_t *tree);
+void btree_free(btree_t *tree);
 
 
 void ** get_values(btree_t *tree, btree_node_t *node);

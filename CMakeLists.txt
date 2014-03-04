@@ -14,8 +14,8 @@ target_link_libraries(check_median ${LIBS})
 add_test(check_median ${CMAKE_CURRENT_BINARY_DIR}/check_median)
 
 
-add_library(map btree.c map.c)
-add_executable(check_map check_btree.c)
+add_library(map btree.c hash.c map.c)
+add_executable(check_map check_map.c check_hash.c check_btree.c)
 target_link_libraries(check_map map ${LIBS})
 add_test(check_map ${CMAKE_CURRENT_BINARY_DIR}/check_map)
 

@@ -10,14 +10,24 @@ const struct map_vtable_struct btree_vtable =
 {
   .get = (map_get_t) btree_get,
   .set = (map_set_t) btree_set,
-  .delete = (map_delete_t) btree_delete
+  .free = (map_free_t) btree_free
 };
 
 
-void btree_delete(btree_t *tree)
+void free_node(btree_t *tree, btree_node_t *node)
 {
-  // Not implemented
-  assert(0);
+  if (! node->leaf) {
+	for(int i = 0; i <= node->n; i++) {
+	  free_node(tree, get_children(tree, node)[i]);
+	}
+  }
+  free(node);
+}
+
+void btree_free(btree_t *tree)
+{
+  free_node(tree, tree->root);
+  free(tree);
 }
 
 
