@@ -19,6 +19,5 @@ add_executable(check_map check_map.c check_hash.c check_btree.c)
 target_link_libraries(check_map map ${LIBS})
 add_test(check_map ${CMAKE_CURRENT_BINARY_DIR}/check_map)
 
-
 add_executable(benchmark_map benchmark_map.c)
-target_link_libraries(benchmark_map map)
+target_link_libraries(benchmark_map map ${LIBS})
