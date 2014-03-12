@@ -6,6 +6,7 @@
 
 #include "btree.h"
 #include "hash.h"
+#include "red_black.h"
 
 
 map_t *init_map(const char *choice)
@@ -16,6 +17,9 @@ map_t *init_map(const char *choice)
   }
   else if (strcmp(choice, "hash") == 0) {
 	return init_hash();
+  }
+  else if (strcmp(choice, "red_black") == 0) {
+	return init_red_black();
   }
   else {
 	fprintf(stderr, "Invalid choice %s\n", choice);
@@ -50,6 +54,7 @@ int main(int argc, char *argv[])
 
   char *map_choice = argv[1];
   int n_entries = atoi(argv[2]);
+  assert(n_entries > 0);
 
   map_t *m = init_map(map_choice);
   if(!m) {
