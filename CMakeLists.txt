@@ -21,3 +21,9 @@ add_test(check_map ${CMAKE_CURRENT_BINARY_DIR}/check_map)
 
 add_executable(benchmark_map benchmark_map.c)
 target_link_libraries(benchmark_map map ${LIBS})
+
+
+add_library(heap heap.c)
+add_executable(check_heap check_heap.c)
+target_link_libraries(check_heap heap ${LIBS})
+add_test(check_map ${CMAKE_CURRENT_BINARY_DIR}/check_heap)
